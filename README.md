@@ -9,14 +9,16 @@ Supports:
 * Regular and XMLHttpRequests (AJAX)
 * All HTTP headers without discrimination
 * GET and POST verbs
+* All HTTP verbs*
 * Content types (HTTP payload) without discrimination
 * Redirects (internal redirects are rewritten to relative URIs)
 * Multipart content type
 * Cookies (with conversion of the backend domain to the no.php host)
 
+*whatever your server supports
+
 Does not support (or not tested):
 
-* HTTP verbs other than GET and POST (but these are usually emulated anyway)
 * HTTP greater than version 1.1 (e.g. reusable connections)
 * Upgrade to websocket (persistent connections)
 

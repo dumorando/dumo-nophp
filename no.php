@@ -1,7 +1,7 @@
 <?PHP
 
 /*
- * no.php (c) 2016, 2017 Michael Franzl
+ * no.php (c) 2016, 2017 Michael Franzl, dumorando
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the "Software"),
@@ -23,7 +23,7 @@
  */
 
 
-$backend_url = "https://myapp.backend.com:3000/";
+$backend_url = "http://localhost:4763";
 $backend_info = parse_url($backend_url);
 $host = $_SERVER['HTTP_HOST'];
 $request_uri = $_SERVER['REQUEST_URI'];
@@ -116,8 +116,13 @@ curl_setopt( $curl, CURLOPT_FOLLOWLOCATION, true ); # follow redirects
 curl_setopt( $curl, CURLOPT_HEADER, true ); # include the headers in the output
 curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true ); # return output as string
 
-if ( strtolower($_SERVER['REQUEST_METHOD']) == 'post' ) {
-    curl_setopt( $curl, CURLOPT_POST, true );
+if ( strtolower($_SERVER['REQUEST_METHOD']) == 'post' || strtolower($_SERVER['REQUEST_METHOD']) == 'patch' || strtolower($_SERVER['REQUEST_METHOD']) == 'put' ) {
+    if (strtolower($_SERVER['REQUEST_METHOD']) == 'post') {
+        curl_setopt( $curl, CURLOPT_POST, true );
+    } else {
+        curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD'] );
+    }
+    
     $post_data = file_get_contents("php://input");
 
     if (preg_match("/^multipart/", strtolower($_SERVER['CONTENT_TYPE']))) {
@@ -127,6 +132,10 @@ if ( strtolower($_SERVER['REQUEST_METHOD']) == 'post' ) {
     }
 
     curl_setopt( $curl, CURLOPT_POSTFIELDS, $post_data );
+} else {
+    if (strtolower($_SERVER['REQUEST_METHOD']) != 'get') {
+        curl_setopt( $curl, CURLOPT_CUSTOMREQUEST, $_SERVER['REQUEST_METHOD'] );
+    }
 }
   
 $contents = curl_exec( $curl ); # reverse proxy. the actual request to the backend server.
